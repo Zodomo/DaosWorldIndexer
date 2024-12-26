@@ -1,0 +1,14 @@
+{
+  "name": "daosworldindexer",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "alchemy-sdk": "^3.5.0"
+  }
+}
