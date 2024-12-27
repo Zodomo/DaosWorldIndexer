@@ -1,13 +1,14 @@
 # DaosWorld Token Holder Indexer and Weighted Random Winner Selector
 
-A TypeScript utility for analyzing token holders and selecting weighted random winners across multiple ERC20 tokens launched by Daos.World.
+A TypeScript utility for analyzing token holders and selecting weighted random winners across multiple ERC20 tokens and their associated Uniswap V3 LP positions.
 
 ## Features
 
 - 📊 Fetch all token transfers for specified ERC20 tokens
+- 🏊‍♂️ Track Uniswap V3 LP positions and balances
 - 💰 Calculate accurate token holder balances at specific block numbers
-- 🎲 Select random winners weighted by their total token holdings
-- 📑 Export winner data to CSV format
+- 🎲 Select random winners weighted by both token holdings and LP positions
+- 📑 All functions can export data to disk
 
 ## Usage
 
@@ -20,25 +21,35 @@ const indexer = new DaosWorldIndexer({
   tokens: [
     {
       address: "0x...", // Token contract address
-      blockNumber: 1234567, // Snapshot block number
-      lpAddress: "0x...", // LP address to exclude from holdings
+      lpAddress: "0x...", // Uniswap V3 pool address
     },
   ],
+  logging: true, // Optional: Enable performance logging
 });
 
-/// None of these methods have to be executed in sequential order.
+// Get all token transfers up to a specific block
+const transfers = await indexer.getTransfers(blockNumber, "transfers.csv");
 
-// Get all token transfers
-const transfers = await indexer.getTransfers();
+// Get all LP positions and holders
+const lpHolders = await indexer.getLPHolders(blockNumber, "lp-holders.json");
 
-// Get holder balances
-const balances = await indexer.getBalances();
+// Get detailed LP balances
+const lpBalances = await indexer.getLPBalances(blockNumber, "lp-balances.csv");
 
-// Select 5 random winners weighted by their holdings
-const winners = await indexer.getRandomWinners(5);
+// Get complete balance snapshot (tokens + LP positions)
+const snapshot = await indexer.getBalanceSnapshot(
+  blockNumber,
+  true,
+  "snapshot.csv"
+);
 
-// Export winners to CSV
-await indexer.exportRandomWinners(5);
+// Select random winners with custom LP position weighting
+const winners = await indexer.getRandomWinners(
+  blockNumber,
+  1.5, // LP weight multiplier (0 to disable LP consideration)
+  5, // Number of winners
+  "winners.csv"
+);
 ```
 
 ## Token Configuration
@@ -46,18 +57,20 @@ await indexer.exportRandomWinners(5);
 Each token in the configuration requires:
 
 - `address`: The ERC20 token contract address
-- `blockNumber`: The block number to snapshot holder balances
-- `lpAddress`: The liquidity pool address to exclude from holder calculations
+- `lpAddress`: The Uniswap V3 pool address for the token
 
 ## Features in Detail
 
-- **Transfer Analysis**: Fetches and analyzes all token transfers up to specified block numbers
-- **Balance Calculation**: Accurately computes holder balances while excluding LP addresses
-- **Weighted Random Selection**: Selects winners based on their proportional token holdings
-- **Rate Limiting**: Includes built-in rate limiting and retry logic for API calls
-- **CSV Export**: Exports winner data including addresses and token balances
+- **Transfer Analysis**: Comprehensive token transfer history tracking
+- **LP Position Tracking**: Full Uniswap V3 position tracking including current liquidity
+- **Balance Calculation**: Accurate holder balances for both tokens and LP positions
+- **Weighted Random Selection**: Winners selected based on configurable weights for tokens and LP positions
+- **Rate Limiting**: Built-in rate limiting and retry logic for API calls
+- **Export Data**: All functions support exporting their data to disk
+- **Performance Logging**: Optional timing metrics for all operations
 
 ## Requirements
 
-- Alchemy API key
+- Alchemy API key with access to Base network
 - Node
+- Typescript
