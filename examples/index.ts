@@ -2,7 +2,7 @@ import { DaosWorldIndexer } from "../src";
 
 const blockNumber = 24239616;
 const indexer = new DaosWorldIndexer({
-  alchemyApiKey: "3zthDEQwd2Y1xOele7k04S6Y0eHc1FSr",
+  alchemyApiKey: "ALCHEMY_API_KEY",
   tokens: [
     {
       address: "0x20ef84969f6d81Ff74AE4591c331858b20AD82CD",
