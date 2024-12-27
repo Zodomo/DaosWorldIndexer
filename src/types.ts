@@ -1,14 +1,14 @@
 export type Token = {
   address: string;
-  blockNumber: number;
   lpAddress: string;
 };
 
 export type Balance = {
-  holderAddress?: string;
+  holderAddress: string;
   balances: {
     tokenAddress: string;
     balance: number;
+    lpBalance: number;
   }[];
 };
 
@@ -17,3 +17,13 @@ export type Winner = {
   weight: number;
   balances: Balance[];
 };
+
+export interface Slot0Data {
+  sqrtPriceX96: bigint;
+  tick: number;
+}
+
+export interface LPHolder {
+  address: string;
+  tokenIds: bigint[];
+}
